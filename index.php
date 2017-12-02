@@ -16,28 +16,28 @@ $categoryNews = $snippet->categoryNews(); ?>
 
     <div class="col-lg-6">
         <form action="" method="post" enctype="multipart/form-data">
-            <label for="name">Материал</label>
-            <select name="name" id="name" class="form-control">
-                <? foreach ($categoryNews as $key => $value): ?>
+            <label for="category">Материал</label>
+            <select name="category" id="category" class="form-control">
+                <?php foreach ($categoryNews as $key => $value): ?>
                     <option value="<?=$key?>" id="<?=$key?>"><?=$value['category']?></option>
-                <? endforeach;?>
+                <?php endforeach;?>
             </select>
 
             <br>
 
             <label for="file">Файл</label>
-            <input type="file" name="file" class="form-control">
+            <input type="file" name="file" id="file" class="form-control">
 
             <br>
 
-            <label for="text">Заголовок <span class="alert-info" style="padding: 3px; font-size: 12px">максимум - 140 символов</span></label>
-            <textarea class="form-control" rows="5" maxlength="50"></textarea> <!-- 124 !-->
+            <label for="title">Заголовок <span class="alert-info" style="padding: 3px; font-size: 12px">максимум - 140 символов</span></label>
+            <textarea class="form-control" name="title" id="title" rows="5" maxlength="124"></textarea> <!-- 124 !-->
 
             <br>
             
             <label for="preview">Превью</label>
             <div id="preview">
-
+                
             </div>
 
             <br>
@@ -49,12 +49,14 @@ $categoryNews = $snippet->categoryNews(); ?>
     <script>
         $('button').click(function () {
             var name = $(this).attr('name');
+            var title = $('textarea#title').val();
             var category = $(':selected').attr('id');
+            var file = $('input#file').val();
 
             $.ajax({
                 type: "POST",
                 url: 'example.php',
-                data: {name : name, category : category},
+                data: {name : name, title : title, category : category, file : file},
                 success: function (data) {
                     $('div#preview').html('<img src="images/'+ data +'">');
                 }
