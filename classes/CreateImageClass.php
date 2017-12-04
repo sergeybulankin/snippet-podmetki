@@ -8,7 +8,7 @@ class CreateImageClass
 
     public $fontFamily = 'cuprum.ttf';
 
-    public $fontSize = '25';
+    public $fontSize = '23';
 
     public $widthString = 430;
 
@@ -24,10 +24,12 @@ class CreateImageClass
             '1' => [
                 'category' => 'Новость',
                 'image' => 'news.jpg',
+                'padding' => '50,110',
             ],
             '2' => [
                 'category' => 'Интервью',
-                'image' => 'interview.jpg'
+                'image' => 'interview.jpg',
+                'padding' => '180,110',
             ]
         ];
     }
@@ -50,17 +52,17 @@ class CreateImageClass
     {
         $categoryNews = $_POST['category'];
         $title = $_POST['title'];
-        $file = $_FILES['file']['tmp_name'];
 
         $categoryNewsList = $this->categoryNews();
 
         foreach ($categoryNewsList as $key => $value) {
                 if ($key == $categoryNews) {
                     $res = $value['image'];
+                    $padding = $value['padding'];
                 }
         };
 
-        $this->createImage($res, $title, $file);
+        $this->createImage($res, $title, $file = $_FILES, $padding);
     }
     
     
@@ -72,9 +74,10 @@ class CreateImageClass
     /**
      * @param $nameImage
      * @param $title
-     * @param $file
+     * @param array $file
+     * @param $padding
      */
-    public function createImage($nameImage, $title, $file)
+    public function createImage($nameImage, $title, $file = [], $padding)
     {
         putenv('GDFONTPATH=' . realpath('.'));
         
@@ -82,9 +85,9 @@ class CreateImageClass
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
         }
         else {
-            move_uploaded_file($file, $this->pathImage);
+            move_uploaded_file($file['file']['name'], $this->pathImage . basename($file['file']['name']));
 
-            $im = imagecreatefromjpeg($file);
+            $im = imagecreatefromjpeg($file['file']['tmp_name']);
         }
 
         $font = $this->fontSize;
@@ -97,7 +100,9 @@ class CreateImageClass
 
         $newImage = time() . rand(555, 25478) . '.jpg';
 
-        imagettftext($im, $font, 0, 50, 110, $textColor, $fontFamily, $titleRes);
+        $xy = explode(',', $padding);
+
+        imagettftext($im, $font, 0, $xy[0], $xy[1], $textColor, $fontFamily, $titleRes);
 
         imagejpeg($im, $this->pathImage . $newImage);
 
