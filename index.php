@@ -47,19 +47,25 @@ $categoryNews = $snippet->categoryNews(); ?>
         </form>
     </div>
     <script>
-        $('button').click(function () {
-            var name = $(this).attr('name');
-            var title = $('textarea#title').val();
-            var category = $(':selected').attr('id');
-            var file = $('input#file').val();
+        $('button').click(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            formData.append('name', $(this).attr('name'));
+            formData.append('category', $(":selected").attr('id'));
+            formData.append('title', $("textarea#title").val());
+            formData.append('file', $(":file").prop("files")[0]);
 
             $.ajax({
                 type: "POST",
                 url: 'example.php',
-                data: {name : name, title : title, category : category, file : file},
+                data: formData,
                 success: function (data) {
-                    $('div#preview').html('<img src="images/'+ data +'">');
-                }
+                   $('div#preview').html('<img src="images/'+ data +'">');
+                },
+                cache: false,
+                contentType: false,
+                processData: false
             });
         });
     </script>

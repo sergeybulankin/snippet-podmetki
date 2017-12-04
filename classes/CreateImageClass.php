@@ -50,7 +50,7 @@ class CreateImageClass
     {
         $categoryNews = $_POST['category'];
         $title = $_POST['title'];
-        $file = $_FILES;
+        $file = $_FILES['file']['tmp_name'];
 
         $categoryNewsList = $this->categoryNews();
 
@@ -82,7 +82,7 @@ class CreateImageClass
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
         }
         else {
-            move_uploaded_file($file, 'images/' . $file);
+            move_uploaded_file($file, $this->pathImage);
 
             $im = imagecreatefromjpeg($file);
         }
