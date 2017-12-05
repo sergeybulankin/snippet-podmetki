@@ -37,13 +37,14 @@ $categoryNews = $snippet->categoryNews(); ?>
             
             <label for="preview">Превью</label>
             <div id="preview">
-                
+
+
             </div>
 
             <br>
 
-            <button type="button" name="preview" class="btn btn-info">Preview</button>
-            <button type="button" name="create"  class="btn btn-success">Create</button>
+            <button type="button" name="preview" class="btn btn-info">Превью</button>
+            <button type="button" name="create"  class="btn btn-success">Создать</button>
         </form>
     </div>
     <script>
@@ -61,7 +62,7 @@ $categoryNews = $snippet->categoryNews(); ?>
                 url: 'example.php',
                 data: formData,
                 success: function (data) {
-                   $('div#preview').html('<img src="images/'+ data +'">');
+                    $('div#preview').html('<img src="images/tmp/'+ data +'">');
                 },
                 cache: false,
                 contentType: false,

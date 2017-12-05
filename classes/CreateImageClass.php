@@ -13,6 +13,8 @@ class CreateImageClass
     public $widthString = 430;
 
     public $pathImage = 'images/';
+    
+    public $pathTmpImage = 'images/tmp/';
 
 
     /**
@@ -72,6 +74,7 @@ class CreateImageClass
     }
 
     /**
+     * create preview image
      * @param $nameImage
      * @param $title
      * @param array $file
@@ -84,9 +87,7 @@ class CreateImageClass
         if (empty($file)) {
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
         }
-        elseif(!empty($file) & $nameImage == 'interview.jpg') {
-            move_uploaded_file($file['file']['name'], $this->pathImage . basename($file['file']['name']));
-            
+        elseif(!empty($file) & $nameImage == 'interview.jpg') {            
             $im = imagecreatefromjpeg("images/interview.jpg");
             imagealphablending($im, true);
             imagesavealpha($im, true);
@@ -98,21 +99,17 @@ class CreateImageClass
             $black = imagecolorallocate($is, 0, 0, 0);
             imagecolortransparent($is, $black);
 
-            imagecopy($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im));
+            imagecopymerge($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im), 100);        //return $im            
         }
         elseif (!empty($file)) {
-            move_uploaded_file($file['file']['name'], $this->pathImage . basename($file['file']['name']));
-
-            $im = imagecreatefromjpeg("images/news.jpg");
-            imagealphablending($im, true);
-            imagesavealpha($im, true);
-
-            $is = imagecreatefromjpeg($file['file']['tmp_name']);
+            $is = imagecreatefromjpeg("images/news.jpg");
             imagealphablending($is, true);
+            imagesavealpha($is, true);
 
-            imagecopymerge($is, $im, 0, 0, 0, 0, imagesx($im), imagesy($im), 70);
+            $im = imagecreatefromjpeg($file['file']['tmp_name']);
+            imagealphablending($im, true);
 
-            //$im = imagecreatefromjpeg($file['file']['tmp_name']);
+            imagecopymerge($im, $is, 0, 0, 0, 0, imagesx($is), imagesy($is), 70);       //return $im            
         }
 
         $font = $this->fontSize;
@@ -129,7 +126,7 @@ class CreateImageClass
 
         imagettftext($im, $font, 0, $xy[0], $xy[1], $textColor, $fontFamily, $titleRes);
 
-        imagejpeg($im, $this->pathImage . $newImage);
+        imagejpeg($im, $this->pathTmpImage . $newImage);
 
         echo $newImage;
     }
