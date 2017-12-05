@@ -8,7 +8,7 @@ class CreateImageClass
 
     public $fontFamily = 'cuprum.ttf';
 
-    public $fontSize = '23';
+    public $fontSize = 23;
 
     public $widthString = 430;
 
@@ -29,7 +29,7 @@ class CreateImageClass
             '2' => [
                 'category' => 'Интервью',
                 'image' => 'interview.jpg',
-                'padding' => '180,110',
+                'padding' => '170,110',
             ]
         ];
     }
@@ -84,10 +84,35 @@ class CreateImageClass
         if (empty($file)) {
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
         }
-        else {
+        elseif(!empty($file) & $nameImage == 'interview.jpg') {
+            move_uploaded_file($file['file']['name'], $this->pathImage . basename($file['file']['name']));
+            
+            $im = imagecreatefromjpeg("images/interview.jpg");
+            imagealphablending($im, true);
+            imagesavealpha($im, true);
+            
+            $is = imagecreatefrompng($file['file']['tmp_name']);
+            imagealphablending($is, false);
+            imagesavealpha($is, true);
+
+            $black = imagecolorallocate($is, 0, 0, 0);
+            imagecolortransparent($is, $black);
+
+            imagecopy($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im));
+        }
+        elseif (!empty($file)) {
             move_uploaded_file($file['file']['name'], $this->pathImage . basename($file['file']['name']));
 
-            $im = imagecreatefromjpeg($file['file']['tmp_name']);
+            $im = imagecreatefromjpeg("images/news.jpg");
+            imagealphablending($im, true);
+            imagesavealpha($im, true);
+
+            $is = imagecreatefromjpeg($file['file']['tmp_name']);
+            imagealphablending($is, true);
+
+            imagecopymerge($is, $im, 0, 0, 0, 0, imagesx($im), imagesy($im), 70);
+
+            //$im = imagecreatefromjpeg($file['file']['tmp_name']);
         }
 
         $font = $this->fontSize;
