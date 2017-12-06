@@ -62,7 +62,17 @@ $categoryNews = $snippet->categoryNews(); ?>
                 url: 'example.php',
                 data: formData,
                 success: function (data) {
-                    $('div#preview').html('<img src="images/tmp/'+ data +'">');
+                    var res = $.parseJSON(data);
+
+                    if (res.success == 1){
+                        $('div#preview').html('<img src="images/tmp/'+ res.file +'">');
+                    }else {
+                        $('div#preview').html('Не совпадают параметры картинки');
+                    }
+                },
+                error: function(data)
+                {
+                    $('div#preview').html('request failed :'+data);
                 },
                 cache: false,
                 contentType: false,

@@ -16,6 +16,8 @@ class CreateImageClass
     
     public $pathTmpImage = 'images/tmp/';
 
+    public $success = 0;
+
 
     /**
      * @return array
@@ -86,6 +88,7 @@ class CreateImageClass
         
         if (empty($file)) {
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
+            $this->success = 1;
         }
         elseif(!empty($file) & $nameImage == 'interview.jpg') {            
             $im = imagecreatefromjpeg("images/interview.jpg");
@@ -99,7 +102,8 @@ class CreateImageClass
             $black = imagecolorallocate($is, 0, 0, 0);
             imagecolortransparent($is, $black);
 
-            imagecopymerge($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im), 100);        //return $im            
+            imagecopymerge($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im), 100);        //return $im
+            $this->success = 1;
         }
         elseif (!empty($file)) {
             $is = imagecreatefromjpeg("images/news.jpg");
@@ -109,7 +113,9 @@ class CreateImageClass
             $im = imagecreatefromjpeg($file['file']['tmp_name']);
             imagealphablending($im, true);
 
-            imagecopymerge($im, $is, 0, 0, 0, 0, imagesx($is), imagesy($is), 70);       //return $im            
+            $this->testUploadImage($is, $im);
+
+            imagecopymerge($im, $is, 0, 0, 0, 0, imagesx($is), imagesy($is), 70);       //return $im
         }
 
         $font = $this->fontSize;
@@ -120,15 +126,18 @@ class CreateImageClass
 
         $titleRes = $this->widthTitle($title);
 
-        $newImage = time() . rand(555, 25478) . '.jpg';
+        $newImage = [
+            'file' => time() . rand(555, 25478) . '.jpg',
+            'success' => $this->success
+        ];
 
         $xy = explode(',', $padding);
 
         imagettftext($im, $font, 0, $xy[0], $xy[1], $textColor, $fontFamily, $titleRes);
 
-        imagejpeg($im, $this->pathTmpImage . $newImage);
+        imagejpeg($im, $this->pathTmpImage . $newImage['file']);
 
-        echo $newImage;
+        echo json_encode($newImage);        
     }
 
 
@@ -166,5 +175,22 @@ class CreateImageClass
         return $res;
     }
 
+
+    /**
+     * test uploaded image for snippet image
+     * @param $is
+     * @param $im
+     * @return int
+     */
+    public function testUploadImage($is, $im)
+    {
+        if (imagesx($is) != imagesx($im)) {
+            return $this->success;
+        }
+        elseif (imagesy($is) != imagesy($im)) {
+            return $this->success;
+        }
+        return $this->success = 1;
+    }
 
 }
