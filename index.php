@@ -43,8 +43,8 @@ $categoryNews = $snippet->categoryNews(); ?>
 
             <br>
 
-            <button type="button" name="preview" class="btn btn-info">Превью</button>
-            <button type="button" name="create"  class="btn btn-success">Создать</button>
+            <button type="button" name="preview" id="preview" class="btn btn-info">Превью</button>
+            <button type="button" name="create" id="create"  class="btn btn-success" style="display: none">Создать</button>
         </form>
     </div>
     <script>
@@ -66,6 +66,12 @@ $categoryNews = $snippet->categoryNews(); ?>
 
                     if (res.success == 1){
                         $('div#preview').html('<img src="images/tmp/'+ res.file +'">');
+                        $('button#create').css('display', 'inline-block');
+
+                        $('button').click(function (e) {
+                            test(res.file);
+                        });
+
                     }else {
                         $('div#preview').html('Не совпадают параметры картинки');
                     }
@@ -78,6 +84,24 @@ $categoryNews = $snippet->categoryNews(); ?>
                 contentType: false,
                 processData: false
             });
+
+
+            function test(data) {                
+                var q = new FormData(this);
+                q.append('name', $(this).attr('name'));
+                q.append('image', data);
+
+                $.ajax({
+                    type: "POST",
+                    url: 'example.php',
+                    data: q,
+                    success: alert(q),
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+
         });
     </script>
 </div>
