@@ -48,7 +48,7 @@ $categoryNews = $snippet->categoryNews(); ?>
         </form>
     </div>
     <script>
-        $('button').click(function (e) {
+        $('button[name = "preview"]').click(function (e) {
             e.preventDefault();
 
             var formData = new FormData(this);
@@ -57,20 +57,19 @@ $categoryNews = $snippet->categoryNews(); ?>
             formData.append('title', $("textarea#title").val());
             formData.append('file', $(":file").prop("files")[0]);
 
+            var res = 'test';
+
             $.ajax({
                 type: "POST",
                 url: 'example.php',
                 data: formData,
+                async: false,
                 success: function (data) {
-                    var res = $.parseJSON(data);
+                    res = $.parseJSON(data);
 
                     if (res.success == 1){
                         $('div#preview').html('<img src="images/tmp/'+ res.file +'">');
                         $('button#create').css('display', 'inline-block');
-
-                        $('button').click(function (e) {
-                            test(res.file);
-                        });
 
                     }else {
                         $('div#preview').html('Не совпадают параметры картинки');
@@ -85,24 +84,30 @@ $categoryNews = $snippet->categoryNews(); ?>
                 processData: false
             });
 
+            copyFile(res.file);
+        });
 
-            function test(data) {                
-                var q = new FormData(this);
-                q.append('name', $(this).attr('name'));
-                q.append('image', data);
+
+        function copyFile(data) {
+            $('button[name = "create"]').click(function (e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                formData.append('name', $(this).attr('name'));
+                formData.append('image', data);
+
 
                 $.ajax({
                     type: "POST",
                     url: 'example.php',
-                    data: q,
-                    success: alert(q),
+                    data: formData,
+                    success: true,
                     cache: false,
                     contentType: false,
                     processData: false
                 });
-            }
-
-        });
+            });
+        }
     </script>
 </div>
 </body>

@@ -8,7 +8,7 @@ class CreateImageClass
 
     public $fontFamily = 'cuprum.ttf';
 
-    public $fontSize = 23;
+    public $fontSize = 27;
 
     public $widthString = 430;
 
@@ -68,10 +68,22 @@ class CreateImageClass
 
         $this->createImage($res, $title, $file = $_FILES, $padding);
     }
-    
-    
+
+
+    /**
+     * copy file to images and save to DB
+     */
     public function save()
     {
+        $dir = $this->pathTmpImage;
+
+        $files = scandir($dir);
+
+        foreach ($files as $file) {
+            if ($file == $_POST['image']) {
+                copy($this->pathTmpImage . $file, $this->pathImage . $file);
+            }
+        }
         
     }
 
