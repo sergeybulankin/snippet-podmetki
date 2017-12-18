@@ -57,8 +57,6 @@ $categoryNews = $snippet->categoryNews(); ?>
             formData.append('title', $("textarea#title").val());
             formData.append('file', $(":file").prop("files")[0]);
 
-            var res = 'test';
-
             $.ajax({
                 type: "POST",
                 url: 'example.php',
@@ -95,7 +93,6 @@ $categoryNews = $snippet->categoryNews(); ?>
                 var formData = new FormData(this);
                 formData.append('name', $(this).attr('name'));
                 formData.append('image', data);
-
 
                 $.ajax({
                     type: "POST",

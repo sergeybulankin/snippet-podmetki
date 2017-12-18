@@ -5,6 +5,17 @@ error_reporting(E_ALL);
 
 class CreateImageClass
 {
+    /*====== DATABASE PARAMETERS ======*/
+
+    private $dbhost = "localhost";
+
+    private $dbname = "pdo";
+
+    private $dbusername = "root";
+
+    private $dbpassword = "123";
+
+    /*====== DATABASE PARAMETERS ======*/
 
     public $fontFamily = 'cuprum.ttf';
 
@@ -71,7 +82,7 @@ class CreateImageClass
 
 
     /**
-     * copy file to images and save to DB
+     * copy file to images and save to DB, delete preview file
      */
     public function save()
     {
@@ -84,8 +95,12 @@ class CreateImageClass
                 copy($this->pathTmpImage . $file, $this->pathImage . $file);
             }
         }
-        
+
+        $this->dbInsert($_POST['image']);
+
+        unlink($this->pathTmpImage . $_POST['image']);
     }
+
 
     /**
      * create preview image
@@ -102,12 +117,12 @@ class CreateImageClass
             $im = imagecreatefromjpeg($this->pathImage . $nameImage);
             $this->success = 1;
         }
-        elseif(!empty($file) & $nameImage == 'interview.jpg') {            
+        elseif(!empty($file) & $nameImage == 'interview.jpg') {
             $im = imagecreatefromjpeg("images/interview.jpg");
             imagealphablending($im, true);
             imagesavealpha($im, true);
-            
-            $is = imagecreatefrompng($file['file']['tmp_name']);
+
+            $is = $this->testTypeImage($file['file']['tmp_name']);      //return creating image
             imagealphablending($is, false);
             imagesavealpha($is, true);
 
@@ -116,6 +131,7 @@ class CreateImageClass
 
             imagecopymerge($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im), 100);        //return $im
             $this->success = 1;
+
         }
         elseif (!empty($file)) {
             $is = imagecreatefromjpeg("images/news.jpg");
@@ -183,13 +199,12 @@ class CreateImageClass
                 $res.=($res==""?"":" ").$word;
             }
         }
-
         return $res;
     }
 
 
     /**
-     * test uploaded image for snippet image
+     * testing sizes uploaded image for snippet image
      * @param $is
      * @param $im
      * @return int
@@ -205,4 +220,44 @@ class CreateImageClass
         return $this->success = 1;
     }
 
+
+    /**
+     * set meme-type image for interview
+     * @param $file
+     * @return int
+     */
+    public function testTypeImage($file)
+    {
+        $size = getimagesize($file);
+        $is = '';
+
+        switch ($size['mime']) {
+            case "image/gif":
+                $is = imagecreatefromgif($file);
+                break;
+            case "image/jpeg":
+                $is = imagecreatefromjpeg($file);
+                break;
+            case "image/png":
+                $is = imagecreatefrompng($file);
+                break;
+        }
+        return $is;
+    }
+
+
+    /**
+     * insert to db
+     * @param $image
+     */
+    public function dbInsert($image)
+    {
+        $pdo = new PDO("mysql:host=$this->dbhost;dbname=$this->dbname", $this->dbusername, $this->dbpassword);
+
+        $statement = $pdo->prepare("INSERT INTO table(image) VALUES(:image)");
+
+        $statement->execute([
+            'image' => $image
+        ]);
+    }
 }
