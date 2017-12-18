@@ -37,8 +37,6 @@ $categoryNews = $snippet->categoryNews(); ?>
             
             <label for="preview">Превью</label>
             <div id="preview">
-
-
             </div>
 
             <br>
@@ -51,11 +49,13 @@ $categoryNews = $snippet->categoryNews(); ?>
         $('button[name = "preview"]').click(function (e) {
             e.preventDefault();
 
+            var res = '';
+            
             var formData = new FormData(this);
             formData.append('name', $(this).attr('name'));
             formData.append('category', $(":selected").attr('id'));
             formData.append('title', $("textarea#title").val());
-            formData.append('file', $(":file").prop("files")[0]);
+            formData.append('file', $(":file").prop("files")[0]);            
 
             $.ajax({
                 type: "POST",
@@ -84,7 +84,6 @@ $categoryNews = $snippet->categoryNews(); ?>
 
             copyFile(res.file);
         });
-
 
         function copyFile(data) {
             $('button[name = "create"]').click(function (e) {
