@@ -23,9 +23,11 @@ class CreateImageClass
 
     public $widthString = 430;
 
-    public $pathImage = 'images/';
+    public $pathImage = 'images/blanks/';
     
     public $pathTmpImage = 'images/tmp/';
+
+    public $pathResult = 'images/results/';
 
     public $success = 0;
 
@@ -92,11 +94,11 @@ class CreateImageClass
 
         foreach ($files as $file) {
             if ($file == $_POST['image']) {
-                copy($this->pathTmpImage . $file, $this->pathImage . $file);
+                copy($this->pathTmpImage . $file, $this->pathResult . $file);
             }
         }
 
-        $this->dbInsert($_POST['image']);
+        //$this->dbInsert($_POST['image']);
 
         unlink($this->pathTmpImage . $_POST['image']);
     }
@@ -118,7 +120,7 @@ class CreateImageClass
             $this->success = 1;
         }
         elseif(!empty($file) & $nameImage == 'interview.jpg') {
-            $im = imagecreatefromjpeg("images/interview.jpg");
+            $im = imagecreatefromjpeg($this->pathImage. "interview.jpg");
             imagealphablending($im, true);
             imagesavealpha($im, true);
 
@@ -134,7 +136,7 @@ class CreateImageClass
 
         }
         elseif (!empty($file)) {
-            $is = imagecreatefromjpeg("images/news.jpg");
+            $is = imagecreatefromjpeg($this->pathImage . "news.jpg");
             imagealphablending($is, true);
             imagesavealpha($is, true);
 
