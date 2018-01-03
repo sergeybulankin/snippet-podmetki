@@ -93,7 +93,7 @@ class CreateImageClass
         $files = scandir($dir);
 
         foreach ($files as $file) {
-            if ($file == $_POST['image']) {
+            if ($file == $_POST['image']) {                
                 copy($this->pathTmpImage . $file, $this->pathResult . $file);
             }
         }
@@ -125,18 +125,17 @@ class CreateImageClass
             imagesavealpha($im, true);
 
             $is = $this->testTypeImage($file['file']['tmp_name']);      //return creating image
-            imagealphablending($is, false);
-            imagesavealpha($is, true);
+            imagesavealpha ($is, false);
+            imagealphablending ($is, false);
 
             $black = imagecolorallocate($is, 0, 0, 0);
             imagecolortransparent($is, $black);
 
-            imagecopymerge($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im), 100);        //return $im
+            imagecopy($im, $is, 43, 83, 0, 0, imagesx($im), imagesy($im));        //return $im
             $this->success = 1;
-
         }
         elseif (!empty($file)) {
-            $is = imagecreatefromjpeg($this->pathImage . "news.jpg");
+            $is = imagecreatefromjpeg($this->pathImage . "material.jpg");
             imagealphablending($is, true);
             imagesavealpha($is, true);
 
@@ -146,6 +145,12 @@ class CreateImageClass
             $this->testUploadImage($is, $im);
 
             imagecopymerge($im, $is, 0, 0, 0, 0, imagesx($is), imagesy($is), 70);       //return $im
+
+            $logo = imagecreatefrompng('images/blanks/logo.png');
+            imagesavealpha ($logo, false);
+            imagealphablending ($logo, false);
+
+            imagecopy($im, $logo, 47, 38, 0, 0, imagesx($logo), imagesy($logo));
         }
 
         $font = $this->fontSize;
